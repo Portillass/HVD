@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Valentine's Question</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ffe6e6, #ffb3b3);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 77, 0.3);
+            text-align: center;
+            max-width: 400px;
+            animation: fadeIn 1s ease-in;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 77, 77, 0.2);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .heart {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: heartbeat 1.5s infinite;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .question {
+            font-size: 28px;
+            margin: 25px 0;
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        button {
+            padding: 12px 35px;
+            font-size: 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+        
+        .yes-btn {
+            background: linear-gradient(45deg, #ff4d4d, #ff6b6b);
+            color: white;
+        }
+        
+        .yes-btn:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ff4d4d);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 77, 77, 0.3);
+        }
+        
+        .no-btn {
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            color: #666;
+        }
+        
+        .no-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message {
+            font-size: 24px;
+            color: #ff4d4d;
+            margin-top: 25px;
+            animation: bounceIn 0.6s;
+            font-weight: bold;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .floating-hearts {
+            position: fixed;
+            pointer-events: none;
+            animation: float 5s linear infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .flower-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+        }
+
+        .flower {
+            position: absolute;
+            animation: flowerFall 6s linear forwards;
+        }
+
+        @keyframes flowerFall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .celebration-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            color: #ff4d4d;
+            text-align: center;
+            opacity: 0;
+            z-index: 1001;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: celebrationText 4s forwards;
+        }
+
+        @keyframes celebrationText {
+            0% { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+
+        .card.accepted {
+            animation: cardAccepted 1s forwards;
+        }
+
+        @keyframes cardAccepted {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-5deg); }
+            75% { transform: translateX(5px) rotate(5deg); }
+        }
+
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(20); opacity: 0; }
+        }
+
+        .love-message {
+            position: fixed;
+            font-size: 24px;
+            color: #ff4d4d;
+            pointer-events: none;
+            animation: floatUp 4s forwards;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkleAnim 1s linear forwards;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(15) rotate(180deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            animation: confettiFall 4s linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .ribbon {
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            pointer-events: none;
+            animation: ribbonFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes ribbonFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .heart-shape {
+            position: absolute;
+            animation: heartFloat 4s ease-in-out infinite;
+        }
+
+        .heart-shape::before,
+        .heart-shape::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 16px;
+            border-radius: 8px 8px 0 0;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart-shape::after {
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes heartFloat {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .sparkle-trail {
+            position: fixed;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .glitter {
+            position: absolute;
+            background: radial-gradient(circle, #fff 0%, transparent 70%);
+            animation: glitterAnim 2s ease-out forwards;
+        }
+
+        @keyframes glitterAnim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(10) rotate(360deg); opacity: 0; }
+        }
+
+        .heart-burst {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: burstAnim 1s ease-out forwards;
+        }
+
+        @keyframes burstAnim {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(15); opacity: 0.5; }
+            100% { transform: scale(30); opacity: 0; }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: #ff4d4d;
+            border-radius: 22px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+            opacity: 0.2;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .star {
+            position: absolute;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            background: gold;
+            animation: starTwinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.5; }
+        }
+
+        .magic-sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            animation: magicSparkle 1s linear forwards;
+        }
+
+        @keyframes magicSparkle {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .love-particles {
+            position: fixed;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            filter: blur(1px);
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: fireworkParticle 1.5s ease-out forwards;
+        }
+
+        @keyframes fireworkParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        .spiral-heart {
+            position: fixed;
+            font-size: 20px;
+            color: #ff4d4d;
+            animation: spiralPath 3s linear forwards;
+        }
+
+        @keyframes spiralPath {
+            0% { transform: translate(-50%, -50%) rotate(0deg) translateX(0); opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(1080deg) translateX(200px); opacity: 0; }
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.8), 
+                rgba(255, 77, 77, 0.4));
+            animation: bubbleFloat 4s ease-in-out forwards;
+        }
+
+        @keyframes bubbleFloat {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { transform: translateY(-100px) scale(1.5); opacity: 0.7; }
+            100% { transform: translateY(-200px) scale(0.5); opacity: 0; }
+        }
+
+        .neon-text {
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 15px #ff4d4d,
+                0 0 20px #ff4d4d,
+                0 0 25px #ff4d4d;
+            animation: neonPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="heart">❤️</div>
+        <div class="question" id="valentineQuestion">Will you be my Valentine?</div>
+        <div class="buttons" id="buttonContainer">
+            <button class="yes-btn" onclick="showMessage(true)">Yes</button>
+            <button class="no-btn" onclick="moveButton(this)">No</button>
+        </div>
+        <div class="message hidden" id="response"></div>
+    </div>
+
+    <div class="flower-container" id="flowerContainer"></div>
+
+    <script>
+        function moveButton(btn) {
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            
+            // Calculate the farthest position (100% away from mouse)
+            let newX, newY;
+            
+            // If mouse is on the left half, move button to 100% right
+            if (mouseX < window.innerWidth / 2) {
+                newX = window.innerWidth - btn.offsetWidth;  // 100% right
+            } else {
+                newX = 0;  // 0% (left edge)
+            }
+            
+            // If mouse is on the top half, move button to 100% bottom
+            if (mouseY < window.innerHeight / 2) {
+                newY = window.innerHeight - btn.offsetHeight;  // 100% bottom
+            } else {
+                newY = 0;  // 0% (top edge)
+            }
+            
+            // Add faster movement
+            btn.style.position = 'fixed';  // Changed to fixed for better edge positioning
+            btn.style.transition = 'all 0.2s ease-out';  // Made animation faster
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
+            
+            // Prevent the default click behavior
+            event.preventDefault();
+            return false;
+        }
+
+        const flowers = ['🌹', '🌸', '🌺', '🌷', '🌼', '💐', '🌻'];
+        
+        function createFlowerAnimation() {
+            const container = document.getElementById('flowerContainer');
+            container.style.display = 'block';
+            
+            // Create celebration text
+            const celebText = document.createElement('div');
+            celebText.className = 'celebration-text';
+            celebText.innerHTML = '💝 Thank You! 💝<br>You\'re Amazing!';
+            document.body.appendChild(celebText);
+            
+            // Create flowers
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const flower = document.createElement('div');
+                    flower.className = 'flower';
+                    flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+                    flower.style.left = Math.random() * 100 + 'vw';
+                    flower.style.fontSize = Math.random() * 20 + 20 + 'px';
+                    flower.style.animationDuration = Math.random() * 2 + 4 + 's';
+                    container.appendChild(flower);
+                    
+                    // Remove flower after animation
+                    setTimeout(() => flower.remove(), 6000);
+                }, i * 100);
+            }
+            
+            // Clean up
+            setTimeout(() => {
+                container.style.display = 'none';
+                celebText.remove();
+            }, 6000);
+        }
+
+        function createSparkles(x, y) {
+            const colors = ['#ff4d4d', '#ff9999', '#ffcccc', '#ff8080'];
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = x + 'px';
+                sparkle.style.top = y + 'px';
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1000);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#ff4d4d', '#ff9999', '#ffcccc', '#ff8080', '#ff6666'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 50);
+            }
+        }
+
+        function createHeartShape(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-shape';
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 4000);
+        }
+
+        function createRibbons() {
+            const colors = ['#ff4d4d', '#ff6666', '#ff8080'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const ribbon = document.createElement('div');
+                    ribbon.className = 'ribbon';
+                    ribbon.style.left = Math.random() * window.innerWidth + 'px';
+                    ribbon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    document.body.appendChild(ribbon);
+                    
+                    setTimeout(() => ribbon.remove(), 3000);
+                }, i * 200);
+            }
+        }
+
+        function createGlitterTrail(e) {
+            const glitter = document.createElement('div');
+            glitter.className = 'glitter';
+            glitter.style.left = e.clientX + 'px';
+            glitter.style.top = e.clientY + 'px';
+            glitter.style.width = Math.random() * 10 + 5 + 'px';
+            glitter.style.height = glitter.style.width;
+            document.body.appendChild(glitter);
+            setTimeout(() => glitter.remove(), 2000);
+        }
+
+        function createHeartBurst(x, y) {
+            const colors = ['#ff4d4d', '#ff6666', '#ff8080', '#ff9999'];
+            for (let i = 0; i < 8; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-burst';
+                heart.style.left = x + 'px';
+                heart.style.top = y + 'px';
+                heart.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                heart.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            }
+        }
+
+        function createMagicEffect(x, y) {
+            const colors = ['#ff1a75', '#ff3399', '#ff4db8', '#ff66cc'];
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                const velocity = 2;
+                const particle = document.createElement('div');
+                particle.className = 'magic-sparkle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const animation = particle.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { 
+                        transform: `translate(${Math.cos(angle) * 100}px, ${Math.sin(angle) * 100}px) scale(0)`,
+                        opacity: 0 
+                    }
+                ], {
+                    duration: 1000,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                });
+                
+                document.body.appendChild(particle);
+                animation.onfinish = () => particle.remove();
+            }
+        }
+
+        function createStars() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * window.innerWidth + 'px';
+            star.style.top = Math.random() * window.innerHeight + 'px';
+            star.style.width = Math.random() * 15 + 5 + 'px';
+            star.style.height = star.style.width;
+            document.body.appendChild(star);
+            
+            setTimeout(() => star.remove(), 1500);
+        }
+
+        function createFireworkParticles(x, y) {
+            const colors = ['#ff1a1a', '#ff3399', '#ff66b3', '#ff99cc'];
+            for (let i = 0; i < 36; i++) {
+                const angle = (i / 36) * Math.PI * 2;
+                const distance = Math.random() * 100 + 50;
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1500);
+            }
+        }
+
+        function createSpiralHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'spiral-heart';
+            heart.textContent = '❤️';
+            heart.style.left = '50%';
+            heart.style.top = '50%';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 3000);
+        }
+
+        function createBubbles(x, y) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    bubble.style.left = x + Math.random() * 40 - 20 + 'px';
+                    bubble.style.top = y + 'px';
+                    bubble.style.width = Math.random() * 20 + 10 + 'px';
+                    bubble.style.height = bubble.style.width;
+                    document.body.appendChild(bubble);
+                    
+                    setTimeout(() => bubble.remove(), 4000);
+                }, i * 200);
+            }
+        }
+
+        function showMessage(response) {
+            const messageDiv = document.getElementById('response');
+            const card = document.querySelector('.card');
+            const question = document.getElementById('valentineQuestion');
+            const buttonContainer = document.getElementById('buttonContainer');
+            
+            messageDiv.classList.remove('hidden');
+            
+            if (response) {
+                // Hide the question and buttons with fade effect
+                question.classList.add('fade-out');
+                buttonContainer.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    question.style.display = 'none';
+                    buttonContainer.style.display = 'none';
+                }, 500);
+                
+                // Add accepted animation to card
+                card.classList.add('accepted');
+                
+                messageDiv.innerHTML = `
+                    ❤️ Yay! Happy Valentine's Day! ❤️<br>
+                    <span style="font-size: 18px; color: #ff6b6b; display: block; margin-top: 10px;">
+                        You've made my day magical! 🌟
+                    </span>
+                `;
+                
+                // Start all animations
+                createConfetti();
+                createRibbons();
+                
+                // Create sparkles around the card
+                setInterval(() => {
+                    const cardRect = card.getBoundingClientRect();
+                    const x = cardRect.x + Math.random() * cardRect.width;
+                    const y = cardRect.y + Math.random() * cardRect.height;
+                    createSparkles(x, y);
+                }, 200);
+                
+                // Create floating hearts
+                setInterval(() => {
+                    createHeartShape(
+                        Math.random() * window.innerWidth,
+                        window.innerHeight + 20
+                    );
+                }, 300);
+                
+                // Animate background
+                animateBackground();
+
+                // Add mouse trail effect
+                document.addEventListener('mousemove', createGlitterTrail);
+                
+                // Create heart bursts randomly
+                setInterval(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createHeartBurst(x, y);
+                }, 500);
+
+                // Add dynamic background animation
+                let angle = 0;
+                const bgAnimation = setInterval(() => {
+                    angle = (angle + 1) % 360;
+                    document.body.style.background = `
+                        linear-gradient(${angle}deg, 
+                        #ffe6e6 0%, 
+                        #ffb3b3 50%, 
+                        #ff9999 100%)
+                    `;
+                }, 50);
+
+                // Cleanup after 30 seconds
+                setTimeout(() => {
+                    document.removeEventListener('mousemove', createGlitterTrail);
+                    clearInterval(bgAnimation);
+                }, 30000);
+
+                // Create wave effect
+                const wave = document.createElement('div');
+                wave.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 10px;
+                    height: 10px;
+                    border: 2px solid #ff4d4d;
+                    border-radius: 50%;
+                    animation: wave 2s linear infinite;
+                `;
+                document.body.appendChild(wave);
+
+                // Add wave animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes wave {
+                        0% { width: 0; height: 0; opacity: 1; }
+                        100% { width: 200vw; height: 200vw; opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Create periodic star effects
+                setInterval(createStars, 200);
+                
+                // Add magic effect on mouse move
+                document.addEventListener('mousemove', (e) => {
+                    if (Math.random() > 0.5) {
+                        createMagicEffect(e.clientX, e.clientY);
+                    }
+                });
+
+                // Create love particles
+                setInterval(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'love-particles';
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = window.innerHeight + 'px';
+                    particle.style.background = `radial-gradient(circle, 
+                        hsl(${Math.random() * 360}, 100%, 70%), 
+                        transparent)`;
+                    particle.style.width = Math.random() * 20 + 10 + 'px';
+                    particle.style.height = particle.style.width;
+                    
+                    const animation = particle.animate([
+                        { transform: 'translateY(0) scale(1)', opacity: 0.8 },
+                        { transform: 'translateY(-100vh) scale(0)', opacity: 0 }
+                    ], {
+                        duration: 3000,
+                        easing: 'ease-out'
+                    });
+                    
+                    document.body.appendChild(particle);
+                    animation.onfinish = () => particle.remove();
+                }, 100);
+
+                // Add neon effect to message
+                messageDiv.classList.add('neon-text');
+
+                // Create firework particles periodically
+                setInterval(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    createFireworkParticles(x, y);
+                }, 1000);
+
+                // Create spiral hearts
+                setInterval(createSpiralHeart, 2000);
+
+                // Create bubbles on card hover
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    createBubbles(e.clientX, rect.bottom);
+                });
+
+                // Create continuous wave effect
+                setInterval(() => {
+                    const wave = document.createElement('div');
+                    wave.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        border: 2px solid rgba(255, 77, 77, 0.5);
+                        border-radius: 50%;
+                        animation: wave 3s ease-out infinite;
+                    `;
+                    document.body.appendChild(wave);
+                    setTimeout(() => wave.remove(), 3000);
+                }, 1000);
+            } else {
+                messageDiv.textContent = 'Maybe next time...';
+            }
+        }
+
+        function animateBackground() {
+            let hue = 0;
+            const interval = setInterval(() => {
+                document.body.style.background = 
+                    `linear-gradient(45deg, 
+                        hsl(${hue}, 100%, 95%), 
+                        hsl(${(hue + 30) % 360}, 100%, 90%))`;
+                hue = (hue + 1) % 360;
+            }, 50);
+            
+            setTimeout(() => clearInterval(interval), 5000);
+        }
+
+        // Start with some initial flowers in the background
+        for(let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.fontSize = '20px';
+                flower.style.opacity = '0.3';
+                document.body.appendChild(flower);
+                setTimeout(() => flower.remove(), 6000);
+            }, i * 2000);
+        }
+
+        // Make the button run away faster after multiple attempts
+        let noButtonAttempts = 0;
+        document.querySelector('.no-btn').addEventListener('mouseenter', function(e) {
+            noButtonAttempts++;
+            if (noButtonAttempts > 3) {
+                this.style.transition = 'all 0.1s ease-out';
+            }
+        });
+
+        // Add sparkle effect to the card
+        const card = document.querySelector('.card');
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle-trail';
+            sparkle.style.left = x + rect.left + 'px';
+            sparkle.style.top = y + rect.top + 'px';
+            sparkle.style.width = '5px';
+            sparkle.style.height = '5px';
+            sparkle.style.background = `radial-gradient(circle, #fff 0%, #ff4d4d 70%)`;
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 1000);
+        });
+    </script>
+</body>
+</html> 
